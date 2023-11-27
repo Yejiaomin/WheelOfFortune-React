@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.example</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>WheelOfFortune-SpringBoot</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>demo</name>
 	<description>Demo project for Spring Boot</description>
@@ -92,7 +92,7 @@
             	<version>2.4.4</version>
             	<configuration>
                 	<version>1</version>
-                	<projectId>springdatastoresample-398023</projectId>
+                	<projectId>skilful-grove-404519</projectId>
             	</configuration>
         </plugin>
 		</plugins>
