@@ -1,11 +1,10 @@
 package com.example.demo;
 
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.*;
 
 @RestController
 
@@ -21,6 +20,7 @@ public class GameController {
         if (game == null) {
             return "The game is invalid";
         }
+        game.setDate(LocalDate.now());
         this.gameRepository.save(game);
         return "success";
     }
@@ -31,14 +31,12 @@ public class GameController {
     @ResponseBody
     @CrossOrigin(origins = "*")
     public List<Game> findAllGames() {
-        Iterable<Game> games = this.gameRepository.findAll();
+        Iterable<Game> games = this.gameRepository.findAll(Sort.by("score").descending());
         List<Game> gameList = new ArrayList<>();
-//    books.forEach(bookList::add);
         for (Game game: games) {
             gameList.add(game);
         }
-        gameList.sort(Comparator.comparingInt(Game::getScore).reversed());
-        return gameList.subList(0,Math.min(10,gameList.size()));
+        return gameList;
     }
     @GetMapping("/findGameByUserId")
     @ResponseBody
@@ -48,7 +46,16 @@ public class GameController {
         List<Game> gameList = new ArrayList<>();
         games.forEach(gameList::add);
         gameList.sort(Comparator.comparingInt(Game::getScore).reversed());
-        return gameList.subList(0,Math.min(10,gameList.size()));
+        return gameList;
     }
+
+    @GetMapping("/deleteGameById")
+    @ResponseBody
+    @CrossOrigin(origins = "*")
+    public String deleteGameById(@RequestParam Long id){
+        this.gameRepository.deleteById(id);
+        return "success";
+    }
+
 
 }
