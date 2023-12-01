@@ -1,9 +1,9 @@
 // import logo from './logo.svg';
 import './App.css';
-import { useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import  axios from 'axios';
-// import { useState } from 'react';
+import {PlayerNameContext} from './App'
 const phrases = ['the light', 'next letter', 'new user'];
 const secretIndex = Math.floor(Math.random() * phrases.length);
 const secret = phrases[secretIndex].toLowerCase();
@@ -27,13 +27,19 @@ function generateHiddenPhrase(secret){
 
 function Game() {
   const auth = getAuth();
-  const[hiddenPhrase,setHiddenPhrase] = useState(generateHiddenPhrase(secret));
+  const[hiddenPhrase,setHiddenPhrase]= useState(generateHiddenPhrase(secret));
   const[notice, setNotice] = useState("");
   const[guessLetter, setGuessLetter] = useState("");
   const[guessTime, setGuessTime] = useState(maxGuessingTime);
   const[previousGuess, setPreviousGuess] = useState("");
   const[gameOver,setGameOver] = useState(false);
-//   const [score, setScore] = useState(0);
+  const {playerName} = useContext(PlayerNameContext);
+  // console.log(`game id: ${playerName}`);
+
+  // useEffect(() => {
+  //   console.log('playerName Updated:', playerName);
+  //   // 在这里执行其他操作
+  // }, [playerName]);
 
   // const[startNewGame,setStartNewGame] = useState(false);
 
@@ -61,10 +67,11 @@ function Game() {
     window.location.href = '/ranking';
   }
 
-  function editGameId(){
-    window.location.href = '/gameId';
+  function editPlayerName(){
+    window.location.href = '/playerName';
   }
   function checkGuess(){
+    console.log(`playerNameCheck: ${playerName}`);
     if(gameOver){
       return;
     }
@@ -82,10 +89,10 @@ function Game() {
         }
         setHiddenPhrase(newHiddenPhrase);
         console.log(`hidden phrase: ${newHiddenPhrase}`);
+        
         if(newHiddenPhrase === secret){
           setNotice("You won the game");
           setGameOver(true);
-          saveGame();
         }else{
           setNotice("This is a right guess");
         }
@@ -95,7 +102,6 @@ function Game() {
         if(guessTime === 1){
            setGameOver(true);
            setNotice("You loss the game");
-           saveGame();
         }else{
           setNotice("This is a wrong guess");
         }
@@ -104,9 +110,9 @@ function Game() {
       }
       setGuessLetter("");
   }
-  function saveRecord(){
-    saveGame();
-    window.location.href = '/';
+  async function saveRecord(){
+    await saveGame();
+    handleShowRanking();
   }
   function cancle(){
     window.location.href = '/';
@@ -118,6 +124,7 @@ function Game() {
     console.log(`wrong guess: ${wrongGuess} ,axGuessingTime:${maxGuessingTime}, processing: ${(maxGuessingTime - wrongGuess)} ,score:${score}` )
     const postData = {
         userId:auth.currentUser.email,
+        playerName:playerName,
         score:score
     };
     try{
@@ -142,13 +149,13 @@ function Game() {
       </div>
       <div>
         <h2>{notice}</h2>{gameOver&&
-        <form>
-        <label>Do you want to save this game record</label>
-        <button onClick={saveRecord}>Save Record</button>
-        <button onClick={cancle}>Not save</button>
-        </form>}
+        <div>
+          <label>Do you want to save this game record</label>
+          <button onClick={saveRecord}>Save Record</button>
+          <button onClick={cancle}>Not save</button>
+        </div>}
         <button onClick={handleShowRanking}>Show Ranking</button>
-        <button onClick={editGameId}>Edit Game Id</button>
+        <button onClick={editPlayerName}>Edit PlayerName</button>
         <h2>Your previous guessLetter is: {previousGuess}</h2>
       </div>
       </header>

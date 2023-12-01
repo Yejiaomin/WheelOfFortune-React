@@ -130,12 +130,50 @@ h1 {
   font-size: 13px;
 }
 
-.show-game-id{
+.show-playerName{
   font-size: 24px;
   margin-bottom: 20px;
   color: black;
 }
-.creat-game-id label, 
-.creat-game-id input{
+/* styles.css */
+/* styles.css */
+
+.creat-playerName {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* 100% of the viewport height */
+}
+
+.playerName-input-box {
   color: black;
+  margin-bottom: 10px;
+}
+
+
+
+.playerName-input-box input {
+  color: black;
+}
+
+/* 将下面的样式添加到你的 CSS 文件中 */
+.buttons-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.playerName-Submit,
+.back-to-play-game {
+  background-color:  #6bc5d2; /* Blue */
+  border: none;
+  color: white;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 20px 10px;
+  cursor: pointer;
+  margin-right: 10px; /* 调整按钮之间的间距 */
 }

@@ -1,13 +1,16 @@
-import React, { useState, useEffect } from 'react';
+import React, {createContext ,useState, useEffect } from 'react';
 import Login from "./Login";
 import Game from './Game';
 import Ranking from './Ranking';
-import GameId from './GameId';
+import PlayerName from './PlayerName';
 import { Navigate, BrowserRouter as Router, Route,Routes } from 'react-router-dom';
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
-import  axios from 'axios';
+import axios from 'axios';
+
+export const PlayerNameContext = createContext();
+
 
 const firebaseConfig = {
   apiKey: "AIzaSyCCLKz_yEJS7oh59SQ3H6lMgKAGBGHAJ-0",
@@ -24,21 +27,23 @@ const firebaseConfig = {
 function App() {
   const auth = getAuth();
   const [user, loading, error] = useAuthState(auth);
-  const[loadingGameId,setLoadingGameId] = useState(true);
-  const[gameId,setGameId] = useState("");
+  const[playerName,setPlayerName] = useState(null);
 
-   function getGameId(userId){
-      axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findGameIdByUserId?userId=${userId}`)
-      .then(response => {
-        console.log(response.data);
-        setGameId(response.data);
-        setLoadingGameId(false);
-      })
-      .catch(error => {
-        console.log(error);
-        setLoadingGameId(false);
-      });
-  }
+  function findPlayerNameByUserId() {
+    if(auth.currentUser){
+      axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findPlayerNameByUserId?userId=${auth.currentUser.email}`)
+    .then(response => {
+      setPlayerName(response.data);  // Axios packs the response in a 'data' property
+    })
+    .catch(error => {
+      // setError(error.message);
+      console.log(error.message);
+    });
+    }else{
+      console.log('User not authenticated');
+    }
+    
+};
 
   if(loading){
     return (<div>
@@ -50,20 +55,18 @@ function App() {
       <p>auth errorr...</p>
     </div>);
   }
-   getGameId(user.email);
-   if (loadingGameId) {
-    return (<div>
-      <p>Loading Game Id...</p>
-    </div>);
-   }
-  console.log(user);
-  console.log(gameId);
+  if(playerName == null){
+    findPlayerNameByUserId();
+  }
   return (
+    <PlayerNameContext.Provider value = {{playerName, setPlayerName}} >
       <Router>
+      {/* add playerName and setPlayerName to the PlayerNameContext. */}
+     
       <Routes>
         <Route
           path="/login"
-          element={user ? <Navigate to="/gameId" /> : <Login />}
+          element={user ? <Navigate to="/playerName" /> : <Login />}
         />
         <Route
           path="/"
@@ -71,14 +74,16 @@ function App() {
         />
         <Route
           path="/ranking"
-          element={<Ranking gameId = {gameId}/>}
+          element={<Ranking />}
         />
         <Route
-        path = "/gameId"
-        element={<GameId initialGameId={gameId}/>}
+        path = "/playerName"
+        element={<PlayerName />}
         />
       </Routes>
+      
       </Router>
+      </PlayerNameContext.Provider>
   );
 }
 
