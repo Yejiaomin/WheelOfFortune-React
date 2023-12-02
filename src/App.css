@@ -93,7 +93,6 @@ h2 {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   margin: 10px;
   width: 45%;
-  display: flex;
   flex-direction: column;
   color: #fff;
   position: relative;
@@ -105,8 +104,8 @@ h1 {
 }
 
 .game-item {
+  text-align: center;
   margin-bottom: 10px;
-  display: flex;
 }
 
 .play-game-button {
@@ -177,3 +176,39 @@ h1 {
   cursor: pointer;
   margin-right: 10px; /* 调整按钮之间的间距 */
 }
+/* ... 其他样式 */
+/* ... 其他样式 */
+
+.games-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+  
+}
+
+
+
+.all-games-previous-page,
+.all-games-next-page,
+.user-games-previous-page,
+.user-games-next-page {
+  background-color: #6bc5d2;
+  color: #fff;
+  border: none;
+  padding: 3px 12px; /* 调整按钮大小 */
+  margin: 0 5px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.all-games-previous-page:hover,
+.all-games-next-page:hover,
+.user-games-previous-page:hover,
+.user-games-next-page:hover {
+  background-color: #4ca9b9;
+}
+
+
+/* ... 其他样式 */

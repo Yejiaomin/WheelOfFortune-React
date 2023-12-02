@@ -10,29 +10,42 @@ function Ranking() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const auth = getAuth();
-    const[allGamescurrentPage,setAllGamesCurrentPage] = useState(1);
-    const[userGamescurrentPage,setUserGamesCurrentPage] = useState(1);
+    const[allGamescurrentPage,setAllGamesCurrentPage] = useState(0);
+    const[userGamescurrentPage,setUserGamesCurrentPage] = useState(0);
     const size = 2;
+    const[totalPageOfAllGames,setTotalPageOfAllGames] = useState(0);
+    const[ totalPageOfUserGames,setTotalPageOfUserGames ] = useState(0);
 
     function handleAllGamePreviousPage(){
-      allGamescurrentPage--;
+      if(allGamescurrentPage > 0){
+        setAllGamesCurrentPage(allGamescurrentPage-1);
+      }
+     
     }
 
     function handleAllGameNextPage(){
-      allGamescurrentPage++;
+      if(allGamescurrentPage < totalPageOfAllGames -1){
+        setAllGamesCurrentPage(allGamescurrentPage+1);
+      }
     }
 
     function handleUserGamePreviousPage(){
-      userGamescurrentPage--;
+      if(userGamescurrentPage > 0){
+        setUserGamesCurrentPage(userGamescurrentPage-1);
+      }
+      
     }
     function handleUserGameNextPage(){
-      userGamescurrentPage++;
+      if(userGamescurrentPage < totalPageOfUserGames -1){
+        setUserGamesCurrentPage(userGamescurrentPage+1);
+      }
     }
 
-    function displayAllGames() {
-        axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findAllGames?page=${allGamescurrentPage}&size=${size}`)
+    async function displayAllGames() {
+        await axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findAllGames?page=${allGamescurrentPage}&size=${size}`)
         .then(response => {
-          setGames(response.data);  // Axios packs the response in a 'data' property
+          setGames(response.data.content);  // Axios packs the response in a 'data' property
+          setTotalPageOfAllGames(response.data.totalPages);
           setLoading(false);
         })
         .catch(error => {
@@ -40,11 +53,12 @@ function Ranking() {
           setLoading(false);
         });
     };
-    function displayGamesByUserId() {
-        axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findGameByUserId?userId=${auth.currentUser.email}&page=${userGamescurrentPage}&size=${size}`)
+    async function displayGamesByUserId() {
+        await axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findGameByUserId?userId=${auth.currentUser.email}&page=${userGamescurrentPage}&size=${size}`)
         .then(response => {
             console.log('Response:', response.data);
-            setUserGames(response.data);  // Axios packs the response in a 'data' property
+            setUserGames(response.data.content); // Axios packs the response in a 'data' property
+            setTotalPageOfUserGames(response.data.totalPages);
             setLoading(false);
           })
           .catch(error => {
@@ -70,8 +84,10 @@ function Ranking() {
     useEffect(() => {
         // Using Axios to fetch data
         displayAllGames()
-        displayGamesByUserId()
-      }, []);
+      }, [allGamescurrentPage]);
+      useEffect(() => {
+        displayGamesByUserId();
+      }, [userGamescurrentPage]);
   return (
     <div className="game-list">
       <div className="all-game-list">
@@ -79,14 +95,18 @@ function Ranking() {
           <h1>All Users</h1>
           <h1>game records</h1>
         </div>
-        {games.map(game => (
+        {games && games.length > 0 ? (
+        games.map(game => (
           <div className="game-item">
             <p>{game.userId} {game.playerName} score: {game.score} at {game.date}</p> 
           </div>
-        ))}
-        <div>
-          <button className='all-games-previous-page' onClick={handleAllGamePreviousPage}>Previous Page</button>
-          <button className='all-games-next-page' onClick={handleAllGameNextPage}>Next Page</button>
+        ))) :(
+          <p >No games available</p>
+        )}
+        <div className='games-page'>
+          <button className='all-games-previous-page' onClick={handleAllGamePreviousPage}>Previous</button>
+          {allGamescurrentPage + 1} / {totalPageOfAllGames}
+          <button className='all-games-next-page' onClick={handleAllGameNextPage}>Next</button>
          </div>
       </div>
       <div className="user-game-list">
@@ -94,14 +114,18 @@ function Ranking() {
         <h1>{auth.currentUser.email}</h1>
         <h1>All game records</h1>
         </div>
-        {usergames.map(usergame => (
+        { usergames && usergames.length >0 ? (
+          usergames.map(usergame => (
           <div className="game-item">
             {usergame.userId} {usergame.playerName} score: {usergame.score} at {usergame.date}<button className = "delete-button"onClick={()=>handleDelete(usergame.id)}>Delete</button>
           </div>
-        ))}
-        <div>
-          <button className='user-games-previous-page' onClick={handleUserGamePreviousPage}>Pre</button>
-          <button className='user-games-next-page' onClick={handleUserGameNextPage}>Next</button>
+        ))):(
+          <p >No usergames available</p>
+        )}
+        <div className='games-page'>
+          <button className='user-games-previous-page' onClick={handleUserGamePreviousPage}>Previous</button>
+          {userGamescurrentPage + 1} / {totalPageOfUserGames}
+          <button  className='user-games-next-page' onClick={handleUserGameNextPage}>Next</button>
           </div>
       </div>
       <div >
