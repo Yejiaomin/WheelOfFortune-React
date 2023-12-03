@@ -113,7 +113,7 @@ function Ranking() {
         {games && games.length > 0 ? (
         games.map(game => (
           <div className="game-item">
-            <p>{game.userId} {game.playerName} score: {game.score} at {game.date}</p> 
+            <p>{game.playerName} score: {game.score} at {game.date}</p> 
           </div>
         ))) :(
           <p >No games available</p>
@@ -132,7 +132,7 @@ function Ranking() {
         { usergames && usergames.length >0 ? (
           usergames.map(usergame => (
           <div className="game-item">
-            {usergame.userId} {usergame.playerName} score: {usergame.score} at {usergame.date}<button className = "delete-button"onClick={()=>handleDelete(usergame.id)}>Delete</button>
+            {usergame.playerName} score: {usergame.score} at {usergame.date}<button className = "delete-button"onClick={()=>handleDelete(usergame.id)}>Delete</button>
           </div>
         ))):(
           <p >No usergames available</p>
