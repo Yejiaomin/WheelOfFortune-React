@@ -4,11 +4,22 @@ import './App.css';
 
 import { getAuth, signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
 
+//Login component
 function Login() {
+
+	//Save variable to store the user's ID
 	const [userId, setUserId] = useState('');
+
+	//Function to sign in with Google acount
 	const signInWithGoogle = () => {
+
+	//Creat a new GoogleAuthProvider instance
   	const provider = new GoogleAuthProvider();
+
+	//Get the authentication instance
   	const auth = getAuth();
+
+	//Sign in with Google using redirect
   	signInWithRedirect(auth, provider)
     	.then((result) => {
       		// User signed in
@@ -19,7 +30,10 @@ function Login() {
     	});
 	};
 
+	//Get the authentication instance
 	const auth = getAuth();
+
+	//Listen for changes in the authentication state
 	auth.onAuthStateChanged(user => {
 		if (user) {
     		// User is signed in.

@@ -1,16 +1,20 @@
-// import logo from './logo.svg';
+// Import necessary modules and styles.
 import './App.css';
 import { useContext, useState, useEffect } from 'react';
 import { getAuth } from 'firebase/auth';
 import  axios from 'axios';
 import {PlayerNameContext} from './App'
-const phrases = ['the light', 'next letter', 'new user'];
+//Array of secret phrase for guessing
+const phrases = ['the light is turning on', 'try next letter', 'this is a new user', 'how are you','holiday is comming'];
+
+//Generate a random index to select a secrete phrase
 const secretIndex = Math.floor(Math.random() * phrases.length);
 const secret = phrases[secretIndex].toLowerCase();
 const maxGuessingTime = 5;
 let wrongGuess = 0;
 let score = 0;
 
+//Function to generate a hidden phrase based on the secrete
 function generateHiddenPhrase(secret){
   let output = "";
   for (let i = 0; i < secret.length; i++) {
@@ -24,9 +28,11 @@ function generateHiddenPhrase(secret){
   return output;
 }
 
-
+//Main Game component
 function Game() {
   const auth = getAuth();
+
+  //State variables to manage game state and user input
   const[hiddenPhrase,setHiddenPhrase]= useState(generateHiddenPhrase(secret));
   const[notice, setNotice] = useState("");
   const[guessLetter, setGuessLetter] = useState("");
@@ -34,15 +40,8 @@ function Game() {
   const[previousGuess, setPreviousGuess] = useState("");
   const[gameOver,setGameOver] = useState(false);
   const {playerName} = useContext(PlayerNameContext);
-  // console.log(`game id: ${playerName}`);
-
-  // useEffect(() => {
-  //   console.log('playerName Updated:', playerName);
-  //   // 在这里执行其他操作
-  // }, [playerName]);
-
-  // const[startNewGame,setStartNewGame] = useState(false);
-
+  
+  // Event handler for input change
   function handleChange(event){
     if(event.nativeEvent.data){
       setGuessLetter(event.nativeEvent.data.toLocaleLowerCase());
@@ -50,6 +49,8 @@ function Game() {
       setGuessLetter("");
     }
   }
+
+  //Event handler to start a new game
   function handleStartNewGame(){
     const newSecretIndex = Math.floor(Math.random() * phrases.length);
     const newSecret = phrases[newSecretIndex].toLowerCase();
@@ -63,13 +64,17 @@ function Game() {
     score = 0;
   }
 
+  //Event handler to show the ranking page
   function handleShowRanking(){
     window.location.href = '/ranking';
   }
 
+  //Event handler to edit playerName
   function editPlayerName(){
     window.location.href = '/playerName';
   }
+
+  //Event handler to check the guessed letter
   function checkGuess(){
     console.log(`playerNameCheck: ${playerName}`);
     if(gameOver){
@@ -110,14 +115,19 @@ function Game() {
       }
       setGuessLetter("");
   }
+
+  //Event handler to save the game record
   async function saveRecord(){
     await saveGame();
     handleShowRanking();
   }
+
+  //Event handler to cancle saveing the game record and go back to the main page
   function cancle(){
     window.location.href = '/';
   }
 
+  //Function to save the game to the backend
   async function saveGame(){  
     console.log(gameOver);
     score = ((maxGuessingTime - wrongGuess) *100 / maxGuessingTime); 

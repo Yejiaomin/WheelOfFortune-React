@@ -4,6 +4,7 @@ import axios from 'axios';
 import { getAuth, signInWithRedirect, GoogleAuthProvider } from 'firebase/auth';
 import PlayerName from './PlayerName';
 
+//Ranking componente
 function Ranking() {
     const [games, setGames] = useState([]);
     const [usergames, setUserGames] = useState([]);
@@ -16,6 +17,7 @@ function Ranking() {
     const[totalPageOfAllGames,setTotalPageOfAllGames] = useState(0);
     const[ totalPageOfUserGames,setTotalPageOfUserGames ] = useState(0);
 
+    //Function to handle moving to the previous page for all games ranking
     function handleAllGamePreviousPage(){
       if(allGamescurrentPage > 0){
         setAllGamesCurrentPage(allGamescurrentPage-1);
@@ -23,24 +25,29 @@ function Ranking() {
      
     }
 
+    //Function to handle moving to the next page for all games ranking
     function handleAllGameNextPage(){
       if(allGamescurrentPage < totalPageOfAllGames -1){
         setAllGamesCurrentPage(allGamescurrentPage+1);
       }
     }
 
+    //Function to hadle moving to the previous page for user games ranking 
     function handleUserGamePreviousPage(){
       if(userGamescurrentPage > 0){
         setUserGamesCurrentPage(userGamescurrentPage-1);
       }
       
-    }
+    }    
+    
+    //Function to hadle moving to the next page for user games ranking 
     function handleUserGameNextPage(){
       if(userGamescurrentPage < totalPageOfUserGames -1){
         setUserGamesCurrentPage(userGamescurrentPage+1);
       }
     }
 
+    //Function to display all games records
     async function displayAllGames() {
         await axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findAllGames?page=${allGamescurrentPage}&size=${size}`)
         .then(response => {
@@ -53,6 +60,8 @@ function Ranking() {
           setLoading(false);
         });
     };
+
+    //Function to display a particular games records
     async function displayGamesByUserId() {
         await axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findGameByUserId?userId=${auth.currentUser.email}&page=${userGamescurrentPage}&size=${size}`)
         .then(response => {
@@ -67,9 +76,12 @@ function Ranking() {
           });
       };
 
+      //Function to navigate back to the game
       function handlePlayGame(){
         window.location.href = '/';
       }
+      
+      //Function to handle deleting a game
       function handleDelete(id){
         axios.get(`https://skilful-grove-404519.ue.r.appspot.com/deleteGameById?id=${id}`)
         .then(response => {
@@ -81,13 +93,16 @@ function Ranking() {
         });
       }
 
+    //useEffect to fetch all games on component mount or when when allGamescurrentPage changes 
     useEffect(() => {
         // Using Axios to fetch data
         displayAllGames()
       }, [allGamescurrentPage]);
-      useEffect(() => {
-        displayGamesByUserId();
-      }, [userGamescurrentPage]);
+
+    //useEffect to fetch user games on component mount or when when userGamescurrentPage changes 
+    useEffect(() => {
+      displayGamesByUserId();
+    }, [userGamescurrentPage]);
   return (
     <div className="game-list">
       <div className="all-game-list">
