@@ -63,7 +63,7 @@ function Ranking() {
 
     //Function to display a particular games records
     async function displayGamesByUserId() {
-        await axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findGameByUserId?userId=${auth.currentUser.email}&page=${userGamescurrentPage}&size=${size}`)
+        await axios.get(`https://skilful-grove-404519.ue.r.appspot.com/findGameByUserId?userId=${auth.currentUser.uid}&page=${userGamescurrentPage}&size=${size}`)
         .then(response => {
             console.log('Response:', response.data);
             setUserGames(response.data.content); // Axios packs the response in a 'data' property
@@ -108,7 +108,7 @@ function Ranking() {
       <div className="all-game-list">
         <div className="game-list-header">
           <h1>All Users</h1>
-          <h1>game records</h1>
+          <h1>Game records</h1>
         </div>
         {games && games.length > 0 ? (
         games.map(game => (
@@ -126,8 +126,8 @@ function Ranking() {
       </div>
       <div className="user-game-list">
       <div className="game-list-header">
-        <h1>{auth.currentUser.email}</h1>
-        <h1>All game records</h1>
+        <h1>Google Id: {auth.currentUser.uid}</h1>
+        <h1>Game records</h1>
         </div>
         { usergames && usergames.length >0 ? (
           usergames.map(usergame => (

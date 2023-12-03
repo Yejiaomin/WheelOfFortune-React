@@ -133,7 +133,7 @@ function Game() {
     score = ((maxGuessingTime - wrongGuess) *100 / maxGuessingTime); 
     console.log(`wrong guess: ${wrongGuess} ,axGuessingTime:${maxGuessingTime}, processing: ${(maxGuessingTime - wrongGuess)} ,score:${score}` )
     const postData = {
-        userId:auth.currentUser.email,
+        userId:auth.currentUser.uid,
         playerName:playerName,
         score:score
     };
